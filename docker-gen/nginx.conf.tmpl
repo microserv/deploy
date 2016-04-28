@@ -60,6 +60,11 @@ server {
         proxy_pass  http://indexer;
     }
 
+    location /api/search {
+        proxy_pass  http://search;
+    }
+
+
     location /templates {
             proxy_pass  http://publishing-templates;
     }
