@@ -1,56 +1,66 @@
-{{ range $host, $containers := groupByMulti $ "Env.SERVICE_NAME" "," }}
-upstream {{ $host }} {
+{{ range $host, $containers := groupByMulti $ "Image.Repository" "," }}
+{{ if ne $host "server" }}
+{{ if ne $host "registry" }}
+{{ if ne $host "agent-instance" }}
+    upstream {{ $host }} {
 
-{{ range $index, $value := $containers }}
+    {{ range $index, $value := $containers }}
 
-	{{ $addrLen := len $value.Addresses }}
-	{{ $network := index $value.Networks 0 }}
-	
-	{{/* If only 1 port exposed, use that */}}
-	{{ if eq $addrLen 1 }}
-		{{ with $address := index $value.Addresses 0 }}
-			# {{$value.Name}}
-			server {{ $network.IP }}:{{ $address.HostPort }};
-		{{ end }}
+        {{ $addrLen := len $value.Addresses }}
+        {{ $network := index $value.Networks 0 }}
+        
+        {{/* If only 1 port exposed, use that */}}
+        {{ if eq $addrLen 1 }}
+            {{ with $address := index $value.Addresses 0 }}
+                # {{$value.Name}}
+                server {{ $network.IP }}:{{ $address.HostPort }};
+            {{ end }}
 
-	{{/* If more than one port exposed, use the one matching VIRTUAL_PORT env var */}}
-	{{ else if $value.Env.VIRTUAL_PORT }}
-		{{ range $i, $address := $value.Addresses }}
-			{{ if eq $address.Port $value.Env.VIRTUAL_PORT }}
-			# {{$value.Name}}
-			server {{ $network.IP }}:{{ $address.HostPort }};
-			{{ end }}
-		{{ end }}
+        {{/* If more than one port exposed, use the one matching VIRTUAL_PORT env var */}}
+        {{ else if $value.Env.VIRTUAL_PORT }}
+            {{ range $i, $address := $value.Addresses }}
+                {{ if eq $address.Port $value.Env.VIRTUAL_PORT }}
+                # {{$value.Name}}
+                server {{ $network.IP }}:{{ $address.HostPort }};
+                {{ end }}
+            {{ end }}
 
-	{{/* Else default to standard web port 80 */}}
-	{{ else }}
-		{{ range $i, $address := $value.Addresses }}
-			{{ if eq $address.Port "80" }}
-			# {{$value.Name}}
-			server {{ $network.Gateway }}:{{ $address.HostPort }};
-			{{ end }}
-		{{ end }}
-	{{ end }}
+        {{/* Else default to standard web port 80 */}}
+        {{ else }}
+            {{ range $i, $address := $value.Addresses }}
+                {{ if eq $address.Port "80" }}
+                # {{$value.Name}}
+                server {{ $network.Gateway }}:{{ $address.HostPort }};
+                {{ end }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    }
+
+    {{ end }}
 {{ end }}
-}
+{{ end }}
 {{ end }}
 
 server {
 
-	location /o {
-		proxy_pass  http://microauth;
-	}
+    location /auth {
+        proxy_pass  http://microauth/auth;
+    }
 
-	location / {
-		proxy_pass  http://content;
-	}
-	
-	location /publish {
-		proxy_pass  http://publishing;
-	}
+    location / {
+        proxy_pass  http://frontend;
+    }
+    
+    location /publish {
+        proxy_pass  http://publishing;
+    }
 
-	location /templates {
-     		proxy_pass  http://templates;
-   	}
+    location /indexer {
+        proxy_pass  http://indexer;
+    }
+
+    location /templates {
+            proxy_pass  http://publishing-templates;
+    }
 }
-
