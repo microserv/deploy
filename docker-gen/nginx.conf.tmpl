@@ -49,7 +49,9 @@ server {
     location /auth {
         proxy_pass  http://microauth/auth;
     }
-
+    location /oauth2 {
+        proxy_pass  http://microauth;
+    }
     location / {
         proxy_pass  http://frontend;
     }
