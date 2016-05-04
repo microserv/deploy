@@ -1,4 +1,4 @@
-{{ range $host, $containers := groupByMulti $ "Image.Repository" "," }}
+{{ range $host, $containers := groupByMulti $ "Env.SERVICE_NAME" "," }}
 {{ if ne $host "server" }}
 {{ if ne $host "registry" }}
 {{ if ne $host "agent-instance" }}
