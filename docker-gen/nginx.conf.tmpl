@@ -9,7 +9,7 @@
 
         {{ $addrLen := len $value.Addresses }}
         {{ $network := index $value.Networks 0 }}
-        
+
         {{/* If only 1 port exposed, use that */}}
         {{ if eq $addrLen 1 }}
             {{ with $address := index $value.Addresses 0 }}
@@ -55,7 +55,7 @@ server {
     location / {
         proxy_pass  http://frontend;
     }
-    
+
     location /publish {
         proxy_pass  http://publishing;
     }
@@ -67,7 +67,6 @@ server {
     location /api/search {
         proxy_pass  http://search;
     }
-
 
     location /templates {
             proxy_pass  http://publishing-templates;
