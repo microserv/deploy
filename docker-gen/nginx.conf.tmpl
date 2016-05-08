@@ -62,6 +62,10 @@ server {
         proxy_pass  http://microauth;
     }
 
+    location /connect {
+        proxy_pass  http://publishing$request_uri;
+    }
+
     location / {
         proxy_pass  http://frontend;
     }
