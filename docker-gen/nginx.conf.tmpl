@@ -58,6 +58,10 @@ server {
         proxy_pass  http://microauth/auth$request_uri;
     }
 
+    location /accounts {
+         proxy_pass  http://microauth/auth$request_uri;
+    }
+
     location /auth {
         proxy_pass  http://microauth;
     }
