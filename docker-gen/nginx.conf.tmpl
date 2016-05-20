@@ -104,6 +104,10 @@ server {
         proxy_pass  http://indexer;
     }
 
+    location /spell {
+        proxy_pass  http://spell-check;
+    }
+
     location /api/search {
         proxy_pass  http://search;
     }
