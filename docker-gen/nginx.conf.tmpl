@@ -72,8 +72,8 @@ server {
         proxy_pass  http://microauth/auth$request_uri;
     }
 
-    location ~ ^/templates/(?<url>.*) {
-        proxy_pass  http://templates/$url$is_args$args;
+    location ~ ^/templates(?<url>.*) {
+        proxy_pass  http://templates$url$is_args$args;
     }
 
     location /api {
