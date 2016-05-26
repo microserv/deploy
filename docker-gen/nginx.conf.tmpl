@@ -3,6 +3,7 @@
 {{ if ne $host "registry" }}
 {{ if ne $host "comm" }}
 {{ if ne $host "agent-instance" }}
+{{ if ne $host "mongodb" }}
     upstream {{ $host }} {
 
     {{ range $index, $value := $containers }}
@@ -39,6 +40,7 @@
     }
 
     {{ end }}
+{{ end }}
 {{ end }}
 {{ end }}
 {{ end }}
