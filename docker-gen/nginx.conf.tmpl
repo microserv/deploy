@@ -1,38 +1,42 @@
 http {
-	##
-	# Basic Settings
-	##
-	sendfile on;
-	tcp_nopush on;
-	tcp_nodelay on;
-	keepalive_timeout 65;
-	types_hash_max_size 2048;
+    ##
+    # Basic Settings
+    ##
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
 
 
-	include /etc/nginx/mime.types;
-	default_type application/octet-stream;
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
 
-	##
-	# SSL Settings
-	##
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
-	ssl_prefer_server_ciphers on;
+    ##
+    # SSL Settings
+    ##
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+    ssl_prefer_server_ciphers on;
 
-	##
-	# Logging Settings
-	##
-	access_log /var/log/nginx/access.log;
-	error_log /var/log/nginx/error.log;
+    ##
+    # Logging Settings
+    ##
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
 
-	##
-	# Gzip Settings
-	##
-	gzip on;
-	gzip_disable "msie6";
+    ##
+    # Gzip Settings
+    ##
+    gzip on;
+    gzip_disable "msie6";
 
-	##
-	# Upstreams
-	##
+    ##
+    # Upstreams
+    ##
+
+    upstream jenkins {
+        server despina.128.no:8080;
+    }
 
     {{ range $service, $containers := groupByMulti $ "Env.SERVICE_NAME" "," }}
     {{ if ne $service "mongodb" }}
@@ -157,6 +161,9 @@ http {
 
     {{ end }}
 
+        location ^~ /jenkins/ {
+            proxy_pass http://jenkins/jenkins/;
+        }
     }
 }
 
@@ -164,20 +171,20 @@ stream {
 {{ range $is_bootstrap, $containers := groupByMulti $ "Env.IS_BOOTSTRAP" "," }}
     {{ if eq $is_bootstrap "true" }}
     upstream bootstrap_nodes {
-	{{ range $index, $value := $containers }}
-	    {{ $bootstrap_port := $value.Env.BOOTSTRAP_PORT }}
-	    {{ if $bootstrap_port }}
-		{{ $addrLen := len $value.Addresses }}
-		{{ $network := index $value.Networks 0 }}
+    {{ range $index, $value := $containers }}
+        {{ $bootstrap_port := $value.Env.BOOTSTRAP_PORT }}
+        {{ if $bootstrap_port }}
+        {{ $addrLen := len $value.Addresses }}
+        {{ $network := index $value.Networks 0 }}
 
-		{{ range $i, $address := $value.Addresses }}
-		    {{ if eq $address.Port $value.Env.BOOTSTRAP_PORT }}
-		    # {{$value.Name}}
-		    server {{ $network.IP }}:{{ $address.Port }};
-		    {{ end }}
-		{{ end }}
-	    {{ end }}
-	{{ end }}
+        {{ range $i, $address := $value.Addresses }}
+            {{ if eq $address.Port $value.Env.BOOTSTRAP_PORT }}
+            # {{$value.Name}}
+            server {{ $network.IP }}:{{ $address.Port }};
+            {{ end }}
+        {{ end }}
+        {{ end }}
+    {{ end }}
     }
     {{ end }}
 {{ end }}
