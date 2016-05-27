@@ -1,0 +1,117 @@
+version: '2'
+services:
+    bootstrap:
+        environment:
+            - IS_BOOTSTRAP=true
+            - BOOTSTRAP_NODE=127.0.0.1
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/backend-comm
+        ports:
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+
+    frontend:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/frontend
+        ports:
+            - "80"
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+        depends_on:
+            - bootstrap
+
+    mongodb:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/mongodb
+        ports:
+            - "80"
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+            - "27017"
+            - "28017"
+        depends_on:
+            - bootstrap
+
+    publishing:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/publishing
+        ports:
+            - "80"
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+            - "27017"
+            - "28017"
+        depends_on:
+            - bootstrap
+            - mongodb
+
+    search:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/search
+        ports:
+            - "80"
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+        depends_on:
+            - bootstrap
+            - spell-check
+            - indexer
+
+    spell-check:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/spell-check
+        ports:
+            - "80"
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+        depends_on:
+            - bootstrap
+
+    indexer:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/indexer
+        ports:
+            - "80"
+            - "9001"
+            - "5432"
+            - "${BOOTSTRAP_PORT}"
+        depends_on:
+            - bootstrap
+
+    templates:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/publishing-templates
+        ports:
+            - "80"
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+            - "27017"
+            - "28017"
+        depends_on:
+            - bootstrap
+
+    microauth:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: localhost:5000/microauth
+        ports:
+            - "80"
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+        depends_on:
+            - bootstrap
