@@ -34,10 +34,6 @@ http {
     # Upstreams
     ##
 
-    upstream jenkins {
-        server despina.128.no:8080;
-    }
-
     {{ range $service, $containers := groupByMulti $ "Env.SERVICE_NAME" "," }}
     {{ if ne $service "mongodb" }}
     upstream {{ $service }} {
@@ -161,9 +157,6 @@ http {
 
     {{ end }}
 
-        location ^~ /jenkins/ {
-            proxy_pass http://jenkins/jenkins/;
-        }
     }
 }
 
