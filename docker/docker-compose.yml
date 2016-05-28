@@ -5,7 +5,7 @@ services:
             - IS_BOOTSTRAP=true
             - BOOTSTRAP_NODE=127.0.0.1
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/backend-comm
+        image: ${REGISTRY_URL}/backend-comm
         ports:
             - "9001"
             - "${BOOTSTRAP_PORT}"
@@ -14,7 +14,7 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/frontend
+        image: ${REGISTRY_URL}/frontend
         ports:
             - "80"
             - "9001"
@@ -26,7 +26,7 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/mongodb
+        image: ${REGISTRY_URL}/mongodb
         ports:
             - "80"
             - "9001"
@@ -40,7 +40,7 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/publishing
+        image: ${REGISTRY_URL}/publishing
         ports:
             - "80"
             - "9001"
@@ -55,7 +55,7 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/search
+        image: ${REGISTRY_URL}/search
         ports:
             - "80"
             - "9001"
@@ -69,7 +69,7 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/spell-check
+        image: ${REGISTRY_URL}/spell-check
         ports:
             - "80"
             - "9001"
@@ -81,7 +81,7 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/indexer
+        image: ${REGISTRY_URL}/indexer
         ports:
             - "80"
             - "9001"
@@ -94,7 +94,7 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/publishing-templates
+        image: ${REGISTRY_URL}/publishing-templates
         ports:
             - "80"
             - "9001"
@@ -108,7 +108,7 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
-        image: localhost:5000/microauth
+        image: ${REGISTRY_URL}/microauth
         ports:
             - "80"
             - "9001"
