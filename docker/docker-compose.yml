@@ -89,6 +89,7 @@ services:
             - "${BOOTSTRAP_PORT}"
         depends_on:
             - bootstrap
+            - publishing
 
     templates:
         environment:
