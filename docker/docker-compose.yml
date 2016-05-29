@@ -40,6 +40,8 @@ services:
         environment:
             - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
             - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+            - PUBLISHING_MICROAUTH_CLIENT_ID=${PUBLISHING_MICROAUTH_CLIENT_ID}
+            - PUBLISHING_MICROAUTH_SECRET=${PUBLISHING_MICROAUTH_SECRET}
         image: ${REGISTRY_URL}/publishing
         ports:
             - "80"
