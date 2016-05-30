@@ -44,6 +44,24 @@ http {
     # Upstreams
     ##
 
+    {{ range $is_kibana, $containers := groupByMulti $ "Env.IS_KIBANA" "," }}
+    {{ if eq $is_kibana "true" }}
+    upstream kibana {
+    {{ range $index, $value := $containers }}
+        {{ $addrLen := len $value.Addresses }}
+        {{ $network := index $value.Networks 0 }}
+
+        {{ range $i, $address := $value.Addresses }}
+            {{ if eq $address.Port "5601" }}
+            # {{$value.Name}}
+            server {{ $network.IP }}:{{ $address.Port }};
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    }
+    {{ end }}
+    {{ end }}
+
     {{ range $is_swagger, $containers := groupByMulti $ "Env.IS_SWAGGER" "," }}
     {{ if eq $is_swagger "true" }}
     upstream swagger {
@@ -190,6 +208,17 @@ http {
         {{ end }}
 
 
+    {{ end }}
+
+    {{ range $is_kibana, $containers := groupByMulti $ "Env.IS_KIBANA" "," }}
+    {{ if eq $is_kibana "true" }}
+        {{ $nContainers := len $containers }}
+        {{ if gt $nContainers 0 }}
+        location ~ /kibana(?<url>.*) {
+            proxy_pass  http://kibana$url$is_args$args;
+        }
+        {{ end }}
+    {{ end }}
     {{ end }}
 
     {{ range $is_swagger, $containers := groupByMulti $ "Env.IS_SWAGGER" "," }}
