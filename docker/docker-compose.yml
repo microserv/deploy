@@ -118,3 +118,9 @@ services:
             - "${BOOTSTRAP_PORT}"
         depends_on:
             - bootstrap
+    swagger:
+        environment:
+            - IS_SWAGGER=true
+        image: ${REGISTRY_URL}/swagger
+        ports:
+            - "8080"
