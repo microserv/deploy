@@ -118,6 +118,17 @@ services:
             - "${BOOTSTRAP_PORT}"
         depends_on:
             - bootstrap
+    status:
+        environment:
+            - BOOTSTRAP_NODE=${BOOTSTRAP_NODE}
+            - BOOTSTRAP_PORT=${BOOTSTRAP_PORT}
+        image: ${REGISTRY_URL}/status
+        ports:
+            - "80"
+            - "9001"
+            - "${BOOTSTRAP_PORT}"
+        depends_on:
+            - bootstrap
     swagger:
         environment:
             - IS_SWAGGER=true
