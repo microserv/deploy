@@ -150,6 +150,14 @@ http {
         {{ end }}
 
         {{ if gt $nContainers 0 }}
+        {{ if eq $service "status" }}
+        location ~ /status(?<url>.*) {
+            proxy_pass  http://status$url$is_args$args;
+        }
+        {{ end }}
+        {{ end }}
+
+        {{ if gt $nContainers 0 }}
         {{ if eq $service "frontend" }}
         location / {
             proxy_pass  http://frontend;
